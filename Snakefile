@@ -34,7 +34,7 @@ localrules:
 
 rule all:
     input:
-       "lastal/lbc32.maf"
+       "last_split/lbc32.maf"
      
       
 rule lastdb:
@@ -57,4 +57,13 @@ rule lastal:
     params:
         db_name = LASTDB
     shell:
-       "lastal -P1 {params.db_name} {input.query} | last-split -m1e-6 > {output}"
+       "lastal -P1 -Q1 -D100 {params.db_name} {input.query} > {output}"
+
+
+rule last_split:
+    input:
+        "lastal/{barcode}.maf"
+    output:
+        "last_split/{barcode}.maf"
+    shell:
+        "last-split {input} > {output}"
