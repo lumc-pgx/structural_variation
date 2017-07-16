@@ -7,7 +7,7 @@ import glob
 import datetime
 
 # globals
-INPUT_FILES = glob.glob(config["LAA_DATA_PATH"] + "/*.fastq")
+INPUT_FILES = [f for f in glob.glob(config["LAA_DATA_PATH"] + "/*.fastq") if "chimeras_noise" not in f]
 BARCODE_IDS = [".".join(os.path.basename(f).split(".")[:-1]) for f in INPUT_FILES]
 
 LASTDB_PATH = config.get("LASTDB_PATH", "lastdb")
@@ -34,7 +34,7 @@ localrules:
 
 rule all:
     input:
-       "last_split/lbc32.maf"
+       expand("last_tab/{barcodes}.tab", barcodes=BARCODE_IDS)
      
       
 rule lastdb:
@@ -67,3 +67,12 @@ rule last_split:
         "last_split/{barcode}.maf"
     shell:
         "last-split {input} > {output}"
+
+
+rule last_tab:
+    input:
+        "last_split/{barcode}.maf"
+    output:
+        "last_tab/{barcode}.tab"
+    shell:
+        "maf-convert tab {input} > {output}"
