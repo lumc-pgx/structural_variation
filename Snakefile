@@ -34,7 +34,7 @@ localrules:
 
 rule all:
     input:
-       expand("last_tab/{barcodes}.tab", barcodes=BARCODE_IDS)
+       expand("last_region/{barcodes}.txt", barcodes=BARCODE_IDS)
      
       
 rule lastdb:
@@ -66,7 +66,7 @@ rule last_split:
     output:
         "last_split/{barcode}.maf"
     shell:
-        "last-split {input} > {output}"
+        "last-split -m1e-6 {input} > {output}"
 
 
 rule last_tab:
@@ -76,3 +76,12 @@ rule last_tab:
         "last_tab/{barcode}.tab"
     shell:
         "maf-convert tab {input} > {output}"
+
+
+rule last_regions:
+    input:
+        "last_tab/{barcode}.tab"
+    output:
+        "last_region/{barcode}.txt"
+    script:
+        "scripts/parse_tab.py"
