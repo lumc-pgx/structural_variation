@@ -5,3 +5,5 @@ dependencies:
   - drmaa=0.7
   - snakemake=3.13.3
   - last
+  - pip:
+    - "git+https://git.lumc.nl/PharmacogenomicsPipe/pipe_runner.git@master#egg=pipe_runner"
