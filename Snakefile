@@ -5,6 +5,13 @@ configfile: srcdir("config.yaml")
 import os
 import glob
 import datetime
+import yaml
+
+# yaml representer for dumping config
+from yaml.representer import Representer
+import collections
+yaml.add_representer(collections.defaultdict, Representer.represent_dict)
+
 
 # globals
 INPUT_FILES = [f for f in glob.glob(config["LAA_DATA_PATH"] + "/*.fastq") if "chimeras_noise" not in f]
@@ -19,9 +26,9 @@ LASTDB_FILES = expand("{path}.{{suffix}}".format(path=LASTDB), suffix=["bck", "d
 # handlers for workflow exit status
 onsuccess:
     print("Structural variation  workflow completed successfully")
-    config_file = "config.{}.json".format("{:%Y-%m-%d_%H:%M:%S}".format(datetime.datetime.now()))
+    config_file = "config.{}.yaml".format("{:%Y-%m-%d_%H:%M:%S}".format(datetime.datetime.now()))
     with open(config_file, "w") as outfile:
-        print(json.dumps(config), file=outfile)
+        print(yaml.dump(config, default_flow_style=False), file=outfile)
 
 onerror:
     print("Error encountered while executing workflow")
