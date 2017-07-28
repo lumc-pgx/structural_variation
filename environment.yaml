@@ -6,4 +6,4 @@ dependencies:
   - snakemake=3.13.3
   - last
   - pip:
-    - "git+https://git.lumc.nl/PharmacogenomicsPipe/pipe_runner.git@master#egg=pipe_runner"
+    - "git+ssh://git@git.lumc.nl/PharmacogenomicsPipe/pipe_runner.git@master#egg=pipe_runner"
