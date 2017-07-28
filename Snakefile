@@ -51,6 +51,8 @@ rule lastdb:
         LASTDB_FILES
     params:
         db_name = LASTDB
+    conda:
+        "envs/last.yaml"
     shell:
         "lastdb -P4 -uNEAR -R01 {params.db_name} {input}"
 
@@ -63,6 +65,8 @@ rule lastal:
         "lastal/{barcode}.maf"
     params:
         db_name = LASTDB
+    conda:
+        "envs/last.yaml"
     shell:
        "lastal -P1 -Q1 -D100 {params.db_name} {input.query} > {output}"
 
@@ -72,6 +76,8 @@ rule last_split:
         "lastal/{barcode}.maf"
     output:
         "last_split/{barcode}.maf"
+    conda:
+        "envs/last.yaml"
     shell:
         "last-split -m1e-6 {input} > {output}"
 
@@ -81,6 +87,8 @@ rule last_tab:
         "last_split/{barcode}.maf"
     output:
         "last_tab/{barcode}.tab"
+    conda:
+        "envs/last.yaml"
     shell:
         "maf-convert tab {input} > {output}"
 
