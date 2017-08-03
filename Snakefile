@@ -1,6 +1,8 @@
 include: "helper.snake"
 PARAMS = SVHelper(config, "structural variation")
 
+onsuccess: PARAMS.onsuccess()
+onerror: PARAMS.onerror()
 
 # main workflow
 localrules:
