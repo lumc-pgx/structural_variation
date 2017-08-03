@@ -1,17 +1,13 @@
 # Pipeline Configuration
 
 # Path to the LAA fastq files
-LAA_DATA_PATH: /home/wgallard/MyData/pharmacogenomics_pipeline/preprocessor/96_well_output/LAA
+ALLELE_FASTQ_PATH: /home/wgallard/MyData/pharmacogenomics_pipeline/preprocessor/96_well_output/LAA
 
 # Path to the genome fasta file to be used for mapping/alignment
 # The location of this file should be writable so that indexes can be created
 # TODO - put this somewhere accessible by other users
 GENOME: /bam-export/Guy/GRCh38_no_alt_analysis_set/sequence/GRCh38_no_alt_analysis_set.fasta
 
-# use an existing last database
-# if not specified, the pipeline will create one in the output directory
-LASTDB_PATH: /home/wgallard/MyData/smrtpipe_test/GRCh38/GRCh38_no_alt_analysis_set/sequence
+BARCODES: /exports/lgtc/equipment/PacBio/jobs/000/000206/pacbio-barcodes/barcodes_pacbio_pad_index_1_9_v2/sequence/barcodes_pacbio_pad_index_1_9_v2.fasta  
 
-# name of the last database
-LASTDB_NAME: GRCh38_no_alt_analysis_set
 

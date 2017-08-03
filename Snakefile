@@ -1,38 +1,5 @@
-# load config file
-configfile: srcdir("config.yaml")
-
-# imports
-import os
-import glob
-import datetime
-import yaml
-
-# yaml representer for dumping config
-from yaml.representer import Representer
-import collections
-yaml.add_representer(collections.defaultdict, Representer.represent_dict)
-
-
-# globals
-INPUT_FILES = [f for f in glob.glob(config["LAA_DATA_PATH"] + "/*.fastq") if "chimeras_noise" not in f]
-BARCODE_IDS = [".".join(os.path.basename(f).split(".")[:-1]) for f in INPUT_FILES]
-
-LASTDB_PATH = config.get("LASTDB_PATH", "lastdb")
-LASTDB_NAME = config.get("LASTDB_NAME", "database")
-LASTDB = "{}/{}".format(LASTDB_PATH, LASTDB_NAME)
-LASTDB_FILES = expand("{path}.{{suffix}}".format(path=LASTDB), suffix=["bck", "des", "prj", "sds", "ssp", "suf", "tis"])
-
-
-# handlers for workflow exit status
-onsuccess:
-    print("Structural variation  workflow completed successfully")
-    config_file = "config.{}.yaml".format("{:%Y-%m-%d_%H:%M:%S}".format(datetime.datetime.now()))
-    with open(config_file, "w") as outfile:
-        print(yaml.dump(config, default_flow_style=False), file=outfile)
-
-onerror:
-    print("Error encountered while executing workflow")
-    shell("cat {log}")
+include: "helper.snake"
+PARAMS = SVHelper(config, "structural variation")
 
 
 # main workflow
@@ -41,30 +8,30 @@ localrules:
 
 rule all:
     input:
-       expand("last_region/{barcodes}.txt", barcodes=BARCODE_IDS)
-     
+        PARAMS.outputs
+    
       
 rule lastdb:
     input:
         config["GENOME"]
     output:
-        LASTDB_FILES
+        PARAMS.database_files
     params:
-        db_name = LASTDB
+        db_base = PARAMS.database_base
     conda:
         "envs/last.yaml"
     shell:
-        "lastdb -P4 -uNEAR -R01 {params.db_name} {input}"
+        "lastdb -P4 -uNEAR -R01 {params.db_base} {input}"
 
 
 rule lastal:
     input:
-        LASTDB_FILES,
-        query = config["LAA_DATA_PATH"] + "/{barcode}.fastq"
+        rules.lastdb.output,
+        query = config["ALLELE_FASTQ_PATH"] + "/{barcode}.fastq"
     output:
         "lastal/{barcode}.maf"
     params:
-        db_name = LASTDB
+        db_name = PARAMS.database_base
     conda:
         "envs/last.yaml"
     shell:

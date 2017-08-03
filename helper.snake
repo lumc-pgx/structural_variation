@@ -1,0 +1,51 @@
+# imports
+import os
+import glob
+import yaml
+import datetime
+
+# yaml representer for dumping config
+from yaml.representer import Representer
+import collections
+
+class SVHelper(object):
+    def __init__(self, config, workflow_name):
+        self.config = config
+        self.workflow_name = workflow_name
+
+        with open(config["BARCODES"], "r") as bc_file:
+            self.BARCODE_IDS = [line.strip()[1:] for line in bc_file if line.startswith(">")]
+
+    @property
+    def inputs(self):
+        return [self.config["GENOME"]] + expand(self.config["ALLELE_FASTQ_PATH"] + "/{barcodes}.fastq", barcodes=self.BARCODE_IDS)
+
+    @property
+    def outputs(self):
+        return expand("last_region/{barcodes}.txt", barcodes=self.BARCODE_IDS)
+
+    @property
+    def database_path(self):
+        return os.path.dirname(self.config["GENOME"])
+
+    @property
+    def database_base(self):
+        return os.path.splitext(self.config["GENOME"])[0]
+
+    @property
+    def database_files(self):
+        return expand("{path}.{{suffix}}".format(path=self.database_base), suffix=["bck", "des", "prj", "sds", "ssp", "suf", "tis"])
+
+
+    # handlers for workflow exit status
+    def onsuccess(self):
+        print("{} workflow completed successfully".format(self.workflow_name))
+        yaml.add_representer(collections.OrderedDict, Representer.represent_dict)
+        config_file = "config.{}.yaml".format("{:%Y-%m-%d_%H:%M:%S}".format(datetime.datetime.now()))
+        with open(config_file, "w") as outfile:
+            print(yaml.dump(self.config, default_flow_style=False), file=outfile)
+
+    def onerror(self):
+        print("Error encountered while executing workflow")
+        shell("cat {log}")
+
