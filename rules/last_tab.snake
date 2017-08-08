@@ -1,0 +1,9 @@
+rule last_tab:
+    input:
+        "structural_variation/last_split/{barcode}.maf"
+    output:
+        "structural_variation/last_tab/{barcode}.tab"
+    conda:
+        "../envs/last.yaml"
+    shell:
+        "maf-convert tab {input} > {output}"

@@ -1,0 +1,7 @@
+rule link_sources:
+    input:
+        config["ALLELE_FASTQ_PATH"] + "/{barcode}.fastq"
+    output:
+        "structural_variation/inputs/{barcode}.fastq"
+    shell:
+        "ln -s {input} {output}"

@@ -1,0 +1,14 @@
+import os
+
+rule lastdb:
+    input:
+        config["GENOME"]
+    output:
+        expand("{path}.{{suffix}}".format(path=os.path.splitext(config["GENOME"])[0]), 
+                    suffix=["bck", "des", "prj", "sds", "ssp", "suf", "tis"])
+    params:
+        db_base = os.path.splitext(config["GENOME"])[0]
+    conda:
+        "../envs/last.yaml"
+    shell:
+        "lastdb -P4 -uNEAR -R01 {db_base} {input}"

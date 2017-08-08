@@ -1,0 +1,9 @@
+rule last_split:
+    input:
+        "structural_variation/lastal/{barcode}.maf"
+    output:
+        "structural_variation/last_split/{barcode}.maf"
+    conda:
+        "../envs/last.yaml"
+    shell:
+        "last-split -m1e-6 {input} > {output}"
