@@ -1,0 +1,7 @@
+rule last_region:
+    input:
+        "structural_variation/last_tab/{barcode}.tab"
+    output:
+        "structural_variation/last_region/{barcode}.txt"
+    script:
+        "../scripts/parse_tab.py"

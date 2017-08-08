@@ -1,0 +1,14 @@
+import os
+
+rule lastal:
+    input:
+        rules.lastdb.output,
+        query = "structural_variation/inputs/{barcode}.fastq"
+    output:
+        "structural_variation/lastal/{barcode}.maf"
+    params:
+        db_name = os.path.splitext(config["GENOME"])[0]
+    conda:
+        "../envs/last.yaml"
+    shell:
+       "lastal -P1 -Q1 -D100 {params.db_name} {input.query} > {output}"
