@@ -10,7 +10,7 @@ localrules:
 
 rule all:
     input:
-        expand("structural_variation/last_region/{barcodes}.txt", barcodes=PARAMS.BARCODE_IDS)
+        PARAMS.outputs
 
     
 include: "rules/link_sources.snake"
