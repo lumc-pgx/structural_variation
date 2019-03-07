@@ -11,4 +11,4 @@ rule lastdb:
     conda:
         "../envs/last.yaml"
     shell:
-        "lastdb -P4 -uNEAR -R01 {db_base} {input}"
+        "lastdb -P4 -uNEAR -R01 {params.db_base} {input}"
